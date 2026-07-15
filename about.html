@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us – CCKShop</title>
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .about-hero { background: linear-gradient(135deg, #f0fdf4, #e8f5e9); padding: 80px 0; }
+    .about-hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .about-hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; }
+    .about-hero p { color: var(--gray-text); font-size: 1.05rem; line-height: 1.8; margin-bottom: 16px; }
+    .about-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .about-stat { background: #fff; border-radius: 12px; padding: 24px; text-align: center; box-shadow: var(--shadow); }
+    .about-stat strong { display: block; font-size: 2rem; font-weight: 800; color: var(--green); }
+    .about-stat span { font-size: 0.85rem; color: var(--gray-text); }
+    .about-mission { padding: 64px 0; background: #fff; }
+    .mission-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 40px; }
+    .mission-card { text-align: center; padding: 32px 20px; }
+    .mission-icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .mission-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+    .mission-card p { font-size: 0.88rem; color: var(--gray-text); }
+    @media (max-width: 768px) { .about-hero-inner { grid-template-columns: 1fr; } .mission-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="announcement-bar">
+    <div class="announcement-inner">
+      <span>🚚 Free Shipping on Orders Over $99</span>
+      <span>🛡️ 100% Authenticity Guaranteed</span>
+      <span>✅ Wholesale &amp; Retail Available</span>
+    </div>
+  </div>
+  <header class="header" id="header">
+    <div class="header-inner container">
+      <a href="index.html" class="logo-link"><img src="assets/images/logo.png" alt="CCKShop Logo" class="logo-img" /></a>
+      <div class="search-wrap">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" class="search-input" placeholder="Search products, brands, categories..." />
+      </div>
+      <nav class="header-actions">
+        <a href="login.html" class="btn-ghost">Login</a>
+        <a href="register.html" class="btn-ghost">Register</a>
+        <a href="cart.html" class="cart-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="cart-count">0</span></a>
+      </nav>
+    </div>
+    <div class="cat-nav">
+      <div class="container cat-nav-inner">
+        <a href="shop.html" class="cat-link">All Products</a>
+        <a href="shop.html?cat=beauty" class="cat-link">Beauty</a>
+        <a href="shop.html?cat=skincare" class="cat-link">Skincare</a>
+        <a href="shop.html?cat=electronics" class="cat-link">Electronics</a>
+        <a href="shop.html?cat=daily" class="cat-link">Daily Essentials</a>
+        <a href="brands.html" class="cat-link">Brands</a>
+        <a href="wholesale.html" class="cat-link">Wholesale</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="about-hero">
+    <div class="container about-hero-inner">
+      <div>
+        <h1>About CCKShop</h1>
+        <p>CCKShop is your trusted global marketplace for premium beauty, skincare, electronics, and daily essentials. We connect retail shoppers and wholesale buyers with the world's best brands at competitive prices.</p>
+        <p>Based in New Jersey, USA, we serve customers across the globe with a commitment to authenticity, quality, and exceptional service.</p>
+        <a href="shop.html" class="btn-primary">Start Shopping</a>
+      </div>
+      <div class="about-stats">
+        <div class="about-stat"><strong>10,000+</strong><span>Products Available</span></div>
+        <div class="about-stat"><strong>500+</strong><span>Trusted Brands</span></div>
+        <div class="about-stat"><strong>50+</strong><span>Countries Served</span></div>
+        <div class="about-stat"><strong>5,000+</strong><span>Happy Customers</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="about-mission">
+    <div class="container">
+      <div class="text-center">
+        <h2>Our Mission &amp; Values</h2>
+        <p class="text-muted" style="max-width:560px;margin:12px auto 0">We believe everyone deserves access to premium products at fair prices, whether you're a single shopper or a wholesale buyer.</p>
+      </div>
+      <div class="mission-grid">
+        <div class="mission-card"><div class="mission-icon">🛡️</div><h3>Authenticity First</h3><p>Every product on CCKShop is sourced from verified, brand-authorized suppliers. We guarantee 100% genuine items — no exceptions.</p></div>
+        <div class="mission-card"><div class="mission-icon">💚</div><h3>Fair Pricing</h3><p>We work directly with suppliers and distributors to bring you the most competitive prices for both retail and wholesale purchases.</p></div>
+        <div class="mission-card"><div class="mission-icon">🌍</div><h3>Global Reach</h3><p>From our base in New Jersey, we ship worldwide with reliable, tracked delivery to ensure your orders arrive safely and on time.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="cta-section">
+    <div class="container cta-inner">
+      <div class="cta-text">
+        <h2>Ready to Shop or Source Wholesale?</h2>
+        <p>Join thousands of satisfied customers worldwide.</p>
+      </div>
+      <div class="cta-actions">
+        <a href="register.html" class="btn-primary btn-lg">Create Free Account</a>
+        <a href="contact.html" class="btn-outline-white btn-lg">Contact Us</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-bottom" style="border-top:none">
+      <div class="container footer-bottom-inner">
+        <p>&copy; 2025 CCKShop. All rights reserved.</p>
+        <p><a href="mailto:services@cckshop.com" style="color:var(--green)">services@cckshop.com</a></p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
