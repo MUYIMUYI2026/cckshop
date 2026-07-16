@@ -1,6 +1,6 @@
-import { and, eq, ilike, like, or, sql } from "drizzle-orm";
+import { and, eq, ilike, like, or, sql, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, contactSubmissions, InsertContactSubmission } from "../drizzle/schema";
+import { InsertUser, users, products, contactSubmissions, InsertContactSubmission, orders, orderItems, InsertProduct, Order } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -111,4 +111,102 @@ export async function submitContact(data: InsertContactSubmission) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.insert(contactSubmissions).values(data);
+}
+
+// ============ Admin queries ============
+
+// Dashboard stats
+export async function getAdminStats() {
+  const db = await getDb();
+  if (!db) return { totalProducts: 0, totalOrders: 0, totalUsers: 0, totalContacts: 0, recentOrders: [] };
+
+  const [productCount] = await db.select({ count: sql<number>`count(*)` }).from(products);
+  const [orderCount] = await db.select({ count: sql<number>`count(*)` }).from(orders);
+  const [userCount] = await db.select({ count: sql<number>`count(*)` }).from(users);
+  const [contactCount] = await db.select({ count: sql<number>`count(*)` }).from(contactSubmissions);
+  const recentOrders = await db.select().from(orders).orderBy(desc(orders.createdAt)).limit(5);
+
+  return {
+    totalProducts: Number(productCount.count),
+    totalOrders: Number(orderCount.count),
+    totalUsers: Number(userCount.count),
+    totalContacts: Number(contactCount.count),
+    recentOrders,
+  };
+}
+
+// Admin product management
+export async function adminCreateProduct(data: InsertProduct) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(products).values(data);
+}
+
+export async function adminUpdateProduct(id: number, data: Partial<InsertProduct>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(products).set(data).where(eq(products.id, id));
+}
+
+export async function adminDeleteProduct(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(products).where(eq(products.id, id));
+}
+
+// Admin order management
+export async function getOrders(opts?: { status?: string; limit?: number; offset?: number }) {
+  const db = await getDb();
+  if (!db) return { items: [], total: 0 };
+
+  const conditions = [];
+  if (opts?.status && opts.status !== 'all') {
+    conditions.push(eq(orders.status, opts.status as any));
+  }
+
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const query = db.select().from(orders).orderBy(desc(orders.createdAt));
+  if (whereClause) query.where(whereClause);
+
+  const limit = opts?.limit ?? 20;
+  const offset = opts?.offset ?? 0;
+  query.limit(limit).offset(offset);
+
+  const items = await query;
+  return { items, total: items.length };
+}
+
+export async function getOrderById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(orders).where(eq(orders.id, id)).limit(1);
+  if (result.length === 0) return undefined;
+  const items = await db.select().from(orderItems).where(eq(orderItems.orderId, id));
+  return { ...result[0], items };
+}
+
+export async function updateOrderStatus(id: number, status: Order['status']) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(orders).set({ status }).where(eq(orders.id, id));
+}
+
+// Admin user management
+export async function getUsers(opts?: { limit?: number; offset?: number }) {
+  const db = await getDb();
+  if (!db) return { items: [], total: 0 };
+  const limit = opts?.limit ?? 50;
+  const offset = opts?.offset ?? 0;
+  const items = await db.select().from(users).orderBy(desc(users.createdAt)).limit(limit).offset(offset);
+  return { items, total: items.length };
+}
+
+// Admin contact submissions
+export async function getContactSubmissions(opts?: { limit?: number; offset?: number }) {
+  const db = await getDb();
+  if (!db) return { items: [], total: 0 };
+  const limit = opts?.limit ?? 50;
+  const offset = opts?.offset ?? 0;
+  const items = await db.select().from(contactSubmissions).orderBy(desc(contactSubmissions.createdAt)).limit(limit).offset(offset);
+  return { items, total: items.length };
 }

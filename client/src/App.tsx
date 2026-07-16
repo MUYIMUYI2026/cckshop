@@ -14,8 +14,25 @@ import Cart from "./pages/Cart";
 import Wholesale from "./pages/Wholesale";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminProducts from "./pages/admin/Products";
+import AdminOrders from "./pages/admin/Orders";
+import AdminUsers from "./pages/admin/Users";
+import AdminContacts from "./pages/admin/Contacts";
 
-function Router() {
+function AdminRouter() {
+  return (
+    <Switch>
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/products" component={AdminProducts} />
+      <Route path="/admin/orders" component={AdminOrders} />
+      <Route path="/admin/users" component={AdminUsers} />
+      <Route path="/admin/contacts" component={AdminContacts} />
+    </Switch>
+  );
+}
+
+function StoreRouter() {
   return (
     <Switch>
       <Route path="/" component={Home} />
@@ -34,11 +51,18 @@ function Router() {
 }
 
 function Layout() {
+  const [location] = useLocation();
+  const isAdmin = location.startsWith("/admin");
+
+  if (isAdmin) {
+    return <AdminRouter />;
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1">
-        <Router />
+        <StoreRouter />
       </main>
       <Footer />
     </div>
