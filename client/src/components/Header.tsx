@@ -54,7 +54,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
             <img
-              src="/manus-storage/cckshop-logo-cropped_8e21ba14.png"
+              src="/logo.png"
               alt="CCKShop"
               className="h-9 w-auto object-contain"
             />
