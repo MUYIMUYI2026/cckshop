@@ -19,10 +19,12 @@ import AdminProducts from "./pages/admin/Products";
 import AdminOrders from "./pages/admin/Orders";
 import AdminUsers from "./pages/admin/Users";
 import AdminContacts from "./pages/admin/Contacts";
+import AdminLogin from "./pages/admin/Login";
 
 function AdminRouter() {
   return (
     <Switch>
+      <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />

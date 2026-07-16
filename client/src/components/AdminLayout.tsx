@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { useAuth } from "@/_core/hooks/useAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import {
   LayoutDashboard,
   Package,
@@ -10,11 +10,10 @@ import {
   ChevronRight,
   Store,
   Menu,
-  X,
 } from "lucide-react";
 import { useState } from "react";
-import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -26,21 +25,26 @@ const navItems = [
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
-  const { user, isAuthenticated } = useAuth();
+  const { admin, loading, isAuthenticated, logout } = useAdminAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const logoutMutation = trpc.auth.logout.useMutation({
-    onSuccess: () => { window.location.href = "/"; },
-  });
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <Spinner className="w-8 h-8 text-green-500" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="text-6xl mb-4">🔒</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
-          <p className="text-gray-500 mb-6">You need admin privileges to access this page.</p>
-          <Link href="/">
-            <Button>Go to Homepage</Button>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Admin Access Required</h1>
+          <p className="text-gray-500 mb-6">Please sign in with your admin credentials.</p>
+          <Link href="/admin/login">
+            <Button className="bg-green-600 hover:bg-green-700 text-white">Go to Admin Login</Button>
           </Link>
         </div>
       </div>
@@ -89,7 +93,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           </div>
         </Link>
         <button
-          onClick={() => logoutMutation.mutate()}
+          onClick={logout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-red-900/50 hover:text-red-300 transition-colors"
         >
           <LogOut className="w-4 h-4" />
@@ -97,11 +101,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         </button>
         <div className="px-3 py-2 flex items-center gap-2">
           <div className="w-7 h-7 rounded-full bg-green-600 flex items-center justify-center text-xs font-bold">
-            {user?.name?.[0]?.toUpperCase() ?? "A"}
+            {admin?.name?.[0]?.toUpperCase() ?? "A"}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-medium text-white truncate">{user?.name ?? "Admin"}</div>
-            <div className="text-xs text-gray-400 truncate">{user?.email ?? ""}</div>
+            <div className="text-xs font-medium text-white truncate">{admin?.name ?? "Admin"}</div>
+            <div className="text-xs text-gray-400 truncate">{admin?.email ?? ""}</div>
           </div>
         </div>
       </div>

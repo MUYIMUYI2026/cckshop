@@ -97,3 +97,16 @@ export const orderItems = mysqlTable("order_items", {
 
 export type OrderItem = typeof orderItems.$inferSelect;
 export type InsertOrderItem = typeof orderItems.$inferInsert;
+
+// Admin accounts table (independent from Manus OAuth)
+export const adminAccounts = mysqlTable("admin_accounts", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  passwordHash: varchar("passwordHash", { length: 255 }).notNull(),
+  name: varchar("name", { length: 128 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  lastLoginAt: timestamp("lastLoginAt").defaultNow().notNull(),
+});
+
+export type AdminAccount = typeof adminAccounts.$inferSelect;
+export type InsertAdminAccount = typeof adminAccounts.$inferInsert;
