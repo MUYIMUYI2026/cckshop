@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Search, SlidersHorizontal, X, ChevronDown, ChevronRight } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import ProductCard from "@/components/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,7 +14,6 @@ const CATEGORIES = [
   { value: "daily", label: "Daily Essentials", group: "Shop" },
   { value: "clothing", label: "Clothing", group: "Clothing, Shoes & Jewelry" },
   { value: "shoes", label: "Shoes", group: "Clothing, Shoes & Jewelry" },
-  { value: "accessories", label: "Accessories", group: "Clothing, Shoes & Jewelry" },
 ];
 
 const SORT_OPTIONS = [
@@ -31,6 +30,14 @@ export default function Shop() {
   const [search, setSearch] = useState(params.get("search") || "");
   const [searchInput, setSearchInput] = useState(params.get("search") || "");
   const [sort, setSort] = useState("default");
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
+    Shop: true,
+    "Clothing & Shoes": true,
+  });
+
+  const toggleGroup = (group: string) => {
+    setExpandedGroups(prev => ({ ...prev, [group]: !prev[group] }));
+  };
 
   const { data, isLoading } = trpc.products.list.useQuery({
     category: category === "all" ? undefined : category,
@@ -96,8 +103,14 @@ export default function Shop() {
                   </button>
 
                   {/* Shop group */}
-                  <p className="text-xs font-medium text-muted-foreground/60 uppercase tracking-wide px-3 pt-3 pb-1">Shop</p>
-                  {CATEGORIES.filter(c => c.group === "Shop").map(cat => (
+                  <button
+                    onClick={() => toggleGroup("Shop")}
+                    className="w-full flex items-center justify-between px-3 pt-3 pb-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide hover:text-foreground transition-colors"
+                  >
+                    <span>Shop</span>
+                    {expandedGroups["Shop"] ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                  </button>
+                  {expandedGroups["Shop"] && CATEGORIES.filter(c => c.group === "Shop").map(cat => (
                     <button
                       key={cat.value}
                       onClick={() => setCategory(cat.value)}
@@ -112,8 +125,14 @@ export default function Shop() {
                   ))}
 
                   {/* Clothing, Shoes & Jewelry group */}
-                  <p className="text-xs font-medium text-muted-foreground/60 uppercase tracking-wide px-3 pt-3 pb-1">Clothing & Shoes</p>
-                  {CATEGORIES.filter(c => c.group === "Clothing, Shoes & Jewelry").map(cat => (
+                  <button
+                    onClick={() => toggleGroup("Clothing & Shoes")}
+                    className="w-full flex items-center justify-between px-3 pt-3 pb-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide hover:text-foreground transition-colors"
+                  >
+                    <span>Clothing &amp; Shoes</span>
+                    {expandedGroups["Clothing & Shoes"] ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                  </button>
+                  {expandedGroups["Clothing & Shoes"] && CATEGORIES.filter(c => c.group === "Clothing, Shoes & Jewelry").map(cat => (
                     <button
                       key={cat.value}
                       onClick={() => setCategory(cat.value)}

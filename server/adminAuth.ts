@@ -4,6 +4,9 @@ import { SignJWT, jwtVerify } from "jose";
 import { eq } from "drizzle-orm";
 import { getDb } from "./db";
 import { adminAccounts } from "../drizzle/schema";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 
 const ADMIN_JWT_SECRET = new TextEncoder().encode((process.env.JWT_SECRET ?? "fallback") + "_admin_panel");
 const ADMIN_COOKIE = "admin_session";
@@ -19,6 +22,36 @@ export async function getAdminFromCookie(req: Request): Promise<{ id: number; em
   }
 }
 
+// Multer storage configuration for product images
+const productImageStorage = multer.diskStorage({
+  destination: (req, _file, cb) => {
+    // In production: __dirname is dist/ so public is dist/public
+    // In development: __dirname is server/_core/ so public is dist/public
+    const subdir = (req.query.subdir as string) || "";
+    const baseDir = process.env.NODE_ENV === "development"
+      ? path.resolve(process.cwd(), "dist", "public", "products", subdir)
+      : path.resolve(path.dirname(path.dirname(import.meta.dirname)), "public", "products", subdir);
+    fs.mkdirSync(baseDir, { recursive: true });
+    cb(null, baseDir);
+  },
+  filename: (_req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({
+  storage: productImageStorage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (_req, file, cb) => {
+    const allowed = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (allowed.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed"));
+    }
+  },
+});
 
 export function adminAuthRouter(): Router {
   const router = Router();
@@ -79,6 +112,29 @@ export function adminAuthRouter(): Router {
     const admin = await getAdminFromCookie(req);
     if (!admin) return res.status(401).json({ error: "Not authenticated" });
     return res.json(admin);
+  });
+
+  // POST /api/admin-auth/upload-product-image
+  // Requires admin session cookie. Accepts multipart/form-data with 'image' field.
+  // Query param: subdir (optional) - subdirectory under products/ e.g. "kitchen"
+  router.post("/upload-product-image", async (req: Request, res: Response) => {
+    const admin = await getAdminFromCookie(req);
+    if (!admin) return res.status(401).json({ error: "Not authenticated" });
+
+    upload.single("image")(req, res, (err) => {
+      if (err) {
+        console.error("[AdminAuth] Upload error:", err);
+        return res.status(400).json({ error: err.message || "Upload failed" });
+      }
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+      const subdir = (req.query.subdir as string) || "";
+      const urlPath = subdir
+        ? `/products/${subdir}/${req.file.filename}`
+        : `/products/${req.file.filename}`;
+      return res.json({ success: true, url: urlPath, filename: req.file.filename });
+    });
   });
 
   return router;
