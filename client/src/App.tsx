@@ -22,6 +22,7 @@ import AdminContacts from "./pages/admin/Contacts";
 import AdminLogin from "./pages/admin/Login";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
+import AccountPage from "./pages/Account";
 
 function AdminRouter() {
   return (
@@ -50,6 +51,7 @@ function StoreRouter() {
       <Route path="/contact" component={Contact} />
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={RegisterPage} />
+      <Route path="/account" component={AccountPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

@@ -67,6 +67,7 @@ export const orders = mysqlTable("orders", {
   id: int("id").autoincrement().primaryKey(),
   orderNumber: varchar("orderNumber", { length: 32 }).notNull().unique(),
   userId: int("userId"),
+  buyerAccountId: int("buyerAccountId"),
   customerName: varchar("customerName", { length: 128 }).notNull(),
   customerEmail: varchar("customerEmail", { length: 320 }).notNull(),
   customerPhone: varchar("customerPhone", { length: 32 }),

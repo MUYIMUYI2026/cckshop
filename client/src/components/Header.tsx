@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { ShoppingCart, Search, Menu, X, User, LogOut, ChevronDown } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, User, LogOut, ChevronDown, Package } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useBuyerAuth } from "@/hooks/useBuyerAuth";
 import { Button } from "@/components/ui/button";
@@ -90,6 +90,23 @@ export default function Header() {
                           <p className="text-xs font-medium text-gray-900">{buyer?.firstName} {buyer?.lastName}</p>
                           <p className="text-xs text-gray-400 truncate">{buyer?.email}</p>
                         </div>
+                        <Link
+                          href="/account"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <User className="w-4 h-4" />
+                          My Account
+                        </Link>
+                        <Link
+                          href="/account?tab=orders"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <Package className="w-4 h-4" />
+                          My Orders
+                        </Link>
+                        <div className="border-t border-gray-100 mt-1 pt-1">
                         <button
                           onClick={() => { logout(); setDropdownOpen(false); }}
                           className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
@@ -97,6 +114,7 @@ export default function Header() {
                           <LogOut className="w-4 h-4" />
                           Sign Out
                         </button>
+                        </div>
                       </div>
                     </>
                   )}

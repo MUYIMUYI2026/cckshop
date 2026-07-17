@@ -1,6 +1,6 @@
 import { and, eq, ilike, like, or, sql, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, contactSubmissions, InsertContactSubmission, orders, orderItems, InsertProduct, Order } from "../drizzle/schema";
+import { InsertUser, users, products, contactSubmissions, InsertContactSubmission, orders, orderItems, InsertProduct, Order, buyerAccounts } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -199,6 +199,65 @@ export async function getUsers(opts?: { limit?: number; offset?: number }) {
   const offset = opts?.offset ?? 0;
   const items = await db.select().from(users).orderBy(desc(users.createdAt)).limit(limit).offset(offset);
   return { items, total: items.length };
+}
+
+// ============ Buyer queries ============
+
+export async function getBuyerOrders(buyerId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  const buyerOrderList = await db
+    .select()
+    .from(orders)
+    .where(eq(orders.buyerAccountId, buyerId))
+    .orderBy(desc(orders.createdAt));
+  return buyerOrderList;
+}
+
+export async function getBuyerOrderById(orderId: number, buyerId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db
+    .select()
+    .from(orders)
+    .where(and(eq(orders.id, orderId), eq(orders.buyerAccountId, buyerId)))
+    .limit(1);
+  if (result.length === 0) return undefined;
+  const items = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+  return { ...result[0], items };
+}
+
+export async function updateBuyerProfile(
+  id: number,
+  data: { firstName?: string; lastName?: string; phone?: string }
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(buyerAccounts).set(data).where(eq(buyerAccounts.id, id));
+}
+
+export async function updateBuyerPassword(id: number, newHash: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(buyerAccounts).set({ passwordHash: newHash }).where(eq(buyerAccounts.id, id));
+}
+
+export async function getBuyerById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db
+    .select({
+      id: buyerAccounts.id,
+      email: buyerAccounts.email,
+      firstName: buyerAccounts.firstName,
+      lastName: buyerAccounts.lastName,
+      phone: buyerAccounts.phone,
+      createdAt: buyerAccounts.createdAt,
+    })
+    .from(buyerAccounts)
+    .where(eq(buyerAccounts.id, id))
+    .limit(1);
+  return result.length > 0 ? result[0] : undefined;
 }
 
 // Admin contact submissions
