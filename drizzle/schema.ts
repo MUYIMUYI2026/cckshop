@@ -30,7 +30,7 @@ export const products = mysqlTable("products", {
   name: varchar("name", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   description: text("description"),
-  category: mysqlEnum("category", ["beauty", "skincare", "electronics", "daily"]).notNull(),
+  category: mysqlEnum("category", ["beauty", "skincare", "electronics", "daily", "clothing"]).notNull(),
   retailPrice: decimal("retailPrice", { precision: 10, scale: 2 }).notNull(),
   wholesalePrice: decimal("wholesalePrice", { precision: 10, scale: 2 }).notNull(),
   minWholesaleQty: int("minWholesaleQty").default(10).notNull(),
