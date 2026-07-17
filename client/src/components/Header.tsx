@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { ShoppingCart, Search, Menu, X, ChevronDown, User } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, User } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
-import { useAuth } from "@/_core/hooks/useAuth";
-import { startLogin } from "@/const";
-import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 
 const NAV_LINKS = [
@@ -22,10 +19,6 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [search, setSearch] = useState("");
   const { totalItems } = useCart();
-  const { user, isAuthenticated } = useAuth();
-  const logoutMutation = trpc.auth.logout.useMutation({
-    onSuccess: () => window.location.reload(),
-  });
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,29 +69,17 @@ export default function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-2 ml-auto">
-            {isAuthenticated ? (
-              <div className="hidden md:flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Hi, {user?.name?.split(" ")[0]}</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => logoutMutation.mutate()}
-                  className="text-sm"
-                >
-                  Logout
-                </Button>
-              </div>
-            ) : (
+            {/* Contact link instead of OAuth login */}
+            <Link href="/contact">
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => startLogin()}
                 className="hidden md:flex items-center gap-1.5 text-sm"
               >
                 <User className="w-4 h-4" />
-                Sign In
+                Contact Us
               </Button>
-            )}
+            </Link>
 
             <Link href="/cart" className="relative p-2 rounded-lg hover:bg-muted transition-colors">
               <ShoppingCart className="w-5 h-5" />
@@ -164,14 +145,13 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
-            {!isAuthenticated && (
-              <button
-                onClick={() => { startLogin(); setMobileOpen(false); }}
-                className="block w-full text-left px-3 py-2 text-sm font-medium rounded-md hover:bg-muted transition-colors"
-              >
-                Sign In
-              </button>
-            )}
+            <Link
+              href="/contact"
+              onClick={() => setMobileOpen(false)}
+              className="block px-3 py-2 text-sm font-medium rounded-md hover:bg-muted transition-colors"
+            >
+              Contact Us
+            </Link>
           </div>
         </div>
       )}
