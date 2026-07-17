@@ -20,6 +20,8 @@ import AdminOrders from "./pages/admin/Orders";
 import AdminUsers from "./pages/admin/Users";
 import AdminContacts from "./pages/admin/Contacts";
 import AdminLogin from "./pages/admin/Login";
+import LoginPage from "./pages/Login";
+import RegisterPage from "./pages/Register";
 
 function AdminRouter() {
   return (
@@ -46,6 +48,8 @@ function StoreRouter() {
       <Route path="/wholesale" component={Wholesale} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
+      <Route path="/login" component={LoginPage} />
+      <Route path="/register" component={RegisterPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

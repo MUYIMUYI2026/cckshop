@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { ShoppingCart, Search, Menu, X, User } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, User, LogOut, ChevronDown } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useBuyerAuth } from "@/hooks/useBuyerAuth";
 import { Button } from "@/components/ui/button";
 
 const NAV_LINKS = [
@@ -18,7 +19,9 @@ export default function Header() {
   const [location, navigate] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const { totalItems } = useCart();
+  const { buyer, isAuthenticated, logout } = useBuyerAuth();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,11 +49,7 @@ export default function Header() {
         <div className="container flex items-center gap-4 h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <img
-              src="/logo.png"
-              alt="CCKShop"
-              className="h-9 w-auto object-contain"
-            />
+            <img src="/logo.png" alt="CCKShop" className="h-9 w-auto object-contain" />
           </Link>
 
           {/* Search */}
@@ -69,18 +68,57 @@ export default function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-2 ml-auto">
-            {/* Contact link instead of OAuth login */}
-            <Link href="/contact">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="hidden md:flex items-center gap-1.5 text-sm"
-              >
-                <User className="w-4 h-4" />
-                Contact Us
-              </Button>
-            </Link>
+            {/* Auth area */}
+            <div className="hidden md:block relative">
+              {isAuthenticated ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setDropdownOpen(v => !v)}
+                    className="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-green-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold">
+                      {buyer?.firstName?.[0]?.toUpperCase()}
+                    </div>
+                    <span>{buyer?.firstName}</span>
+                    <ChevronDown className="w-3 h-3" />
+                  </button>
+                  {dropdownOpen && (
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setDropdownOpen(false)} />
+                      <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20">
+                        <div className="px-4 py-2 border-b border-gray-100">
+                          <p className="text-xs font-medium text-gray-900">{buyer?.firstName} {buyer?.lastName}</p>
+                          <p className="text-xs text-gray-400 truncate">{buyer?.email}</p>
+                        </div>
+                        <button
+                          onClick={() => { logout(); setDropdownOpen(false); }}
+                          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Sign Out
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <Link href="/login">
+                    <Button variant="ghost" size="sm" className="text-sm gap-1.5">
+                      <User className="w-4 h-4" />
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/register">
+                    <Button size="sm" className="text-sm bg-green-600 hover:bg-green-700 text-white">
+                      Register
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </div>
 
+            {/* Cart */}
             <Link href="/cart" className="relative p-2 rounded-lg hover:bg-muted transition-colors">
               <ShoppingCart className="w-5 h-5" />
               {totalItems > 0 && (
@@ -145,13 +183,38 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
-            <Link
-              href="/contact"
-              onClick={() => setMobileOpen(false)}
-              className="block px-3 py-2 text-sm font-medium rounded-md hover:bg-muted transition-colors"
-            >
-              Contact Us
-            </Link>
+            <div className="pt-2 border-t border-gray-100 space-y-1">
+              {isAuthenticated ? (
+                <>
+                  <div className="px-3 py-2 text-sm text-gray-500">
+                    Hi, {buyer?.firstName} {buyer?.lastName}
+                  </div>
+                  <button
+                    onClick={() => { logout(); setMobileOpen(false); }}
+                    className="block w-full text-left px-3 py-2 text-sm font-medium text-red-600 rounded-md hover:bg-red-50 transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="block px-3 py-2 text-sm font-medium rounded-md hover:bg-muted transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setMobileOpen(false)}
+                    className="block px-3 py-2 text-sm font-medium text-green-600 rounded-md hover:bg-green-50 transition-colors"
+                  >
+                    Create Account
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}

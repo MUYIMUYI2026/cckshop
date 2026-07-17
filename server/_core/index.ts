@@ -8,6 +8,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { adminAuthRouter } from "../adminAuth";
+import { buyerAuthRouter } from "../buyerAuth";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 
@@ -41,6 +42,7 @@ async function startServer() {
   registerStorageProxy(app);
   registerOAuthRoutes(app);
   app.use("/api/admin-auth", adminAuthRouter());
+  app.use("/api/buyer-auth", buyerAuthRouter());
   // tRPC API
   app.use(
     "/api/trpc",

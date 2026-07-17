@@ -110,3 +110,18 @@ export const adminAccounts = mysqlTable("admin_accounts", {
 
 export type AdminAccount = typeof adminAccounts.$inferSelect;
 export type InsertAdminAccount = typeof adminAccounts.$inferInsert;
+
+// Buyer accounts table (independent email+password auth for storefront)
+export const buyerAccounts = mysqlTable("buyer_accounts", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  passwordHash: varchar("passwordHash", { length: 255 }).notNull(),
+  firstName: varchar("firstName", { length: 64 }).notNull(),
+  lastName: varchar("lastName", { length: 64 }).notNull(),
+  phone: varchar("phone", { length: 32 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  lastLoginAt: timestamp("lastLoginAt").defaultNow(),
+});
+
+export type BuyerAccount = typeof buyerAccounts.$inferSelect;
+export type InsertBuyerAccount = typeof buyerAccounts.$inferInsert;
