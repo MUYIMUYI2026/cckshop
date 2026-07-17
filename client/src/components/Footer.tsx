@@ -9,7 +9,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <img
-              src="/manus-storage/cckshop-logo_00c65007.png"
+              src="/logo.png"
               alt="CCKShop"
               className="h-9 w-auto object-contain mb-4 brightness-0 invert"
             />
