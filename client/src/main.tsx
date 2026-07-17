@@ -14,6 +14,9 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
 
+  // Don't redirect to Manus OAuth when on admin pages (they use independent auth)
+  if (window.location.pathname.startsWith("/admin")) return;
+
   const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
 
   if (!isUnauthorized) return;

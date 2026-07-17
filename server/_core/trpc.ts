@@ -43,3 +43,21 @@ export const adminProcedure = t.procedure.use(
     });
   }),
 );
+
+// Admin procedure that uses independent JWT cookie (no Manus OAuth required)
+export const adminJwtProcedure = t.procedure.use(
+  t.middleware(async opts => {
+    const { ctx, next } = opts;
+
+    if (!ctx.adminUser) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Admin login required" });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        adminUser: ctx.adminUser,
+      },
+    });
+  }),
+);

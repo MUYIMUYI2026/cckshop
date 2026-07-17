@@ -3,20 +3,15 @@ import { TRPCError } from "@trpc/server";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, adminJwtProcedure, router } from "./_core/trpc";
 import {
   getProducts, getProductBySlug, getProductById, submitContact,
   getAdminStats, adminCreateProduct, adminUpdateProduct, adminDeleteProduct,
   getOrders, getOrderById, updateOrderStatus, getUsers, getContactSubmissions,
 } from "./db";
 
-// Admin guard middleware
-const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== 'admin') {
-    throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
-  }
-  return next({ ctx });
-});
+// Admin guard middleware - uses independent JWT cookie (no Manus OAuth)
+const adminProcedure = adminJwtProcedure;
 
 export const appRouter = router({
   system: systemRouter,
