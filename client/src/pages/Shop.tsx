@@ -7,11 +7,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 
 const CATEGORIES = [
-  { value: "all", label: "All Products" },
-  { value: "beauty", label: "Beauty" },
-  { value: "skincare", label: "Skincare" },
-  { value: "electronics", label: "Electronics" },
-  { value: "daily", label: "Daily Essentials" },
+  { value: "all", label: "All Products", group: null },
+  { value: "beauty", label: "Beauty", group: "Shop" },
+  { value: "skincare", label: "Skincare", group: "Shop" },
+  { value: "electronics", label: "Electronics", group: "Shop" },
+  { value: "daily", label: "Daily Essentials", group: "Shop" },
+  { value: "clothing", label: "Clothing", group: "Clothing, Shoes & Jewelry" },
+  { value: "shoes", label: "Shoes", group: "Clothing, Shoes & Jewelry" },
+  { value: "accessories", label: "Accessories", group: "Clothing, Shoes & Jewelry" },
 ];
 
 const SORT_OPTIONS = [
@@ -80,7 +83,37 @@ export default function Shop() {
               <div className="mb-5">
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Category</p>
                 <div className="space-y-1">
-                  {CATEGORIES.map(cat => (
+                  {/* All Products */}
+                  <button
+                    onClick={() => setCategory("all")}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                      category === "all"
+                        ? "bg-primary text-primary-foreground font-medium"
+                        : "hover:bg-muted text-foreground/70"
+                    }`}
+                  >
+                    All Products
+                  </button>
+
+                  {/* Shop group */}
+                  <p className="text-xs font-medium text-muted-foreground/60 uppercase tracking-wide px-3 pt-3 pb-1">Shop</p>
+                  {CATEGORIES.filter(c => c.group === "Shop").map(cat => (
+                    <button
+                      key={cat.value}
+                      onClick={() => setCategory(cat.value)}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                        category === cat.value
+                          ? "bg-primary text-primary-foreground font-medium"
+                          : "hover:bg-muted text-foreground/70"
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+
+                  {/* Clothing, Shoes & Jewelry group */}
+                  <p className="text-xs font-medium text-muted-foreground/60 uppercase tracking-wide px-3 pt-3 pb-1">Clothing & Shoes</p>
+                  {CATEGORIES.filter(c => c.group === "Clothing, Shoes & Jewelry").map(cat => (
                     <button
                       key={cat.value}
                       onClick={() => setCategory(cat.value)}
