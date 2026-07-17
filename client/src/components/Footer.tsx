@@ -11,7 +11,7 @@ export default function Footer() {
             <img
               src="/logo.png"
               alt="CCKShop"
-              className="h-9 w-auto object-contain mb-4 brightness-0 invert"
+              className="h-9 w-auto object-contain mb-4"
             />
             <p className="text-sm text-gray-400 leading-relaxed mb-4">
               Your trusted global marketplace for premium beauty, skincare, electronics, and daily essentials. Serving retail and wholesale customers worldwide.
